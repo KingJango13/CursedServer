@@ -85,6 +85,8 @@ http.createServer(function(req, res) {
         fs.readFile("./" + pathArray[0], function(error, data) {
             if(error) {
                 console.error(error);
+                res.write("Error loading " + pathArray[0]);
+                res.end();
                 return;
             }
             res.write(data);
