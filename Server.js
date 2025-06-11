@@ -1,6 +1,6 @@
 const http = require("http");
 const fs = require("fs");
-const fetch = require("node-fetch");
+const {fetch} = require("node-fetch");
 
 function hasOwn(o, p) {
     return Object.prototype.hasOwnProperty.call(o, p);
