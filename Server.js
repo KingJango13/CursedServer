@@ -1,4 +1,6 @@
-const http = require("http");
+const VERSION = "1.0.0";
+
+const https = require("https");
 const fs = require("fs");
 const axios = require("axios");
 
@@ -74,7 +76,12 @@ async function getIGUserInfo(username) {
 
 let imageRoutes = {};
 
-http.createServer(function(req, res) {
+let serverOptions = {
+    key: fs.readFileSync("./jango_web_server.key"),
+    cert: fs.readFileSync("./jango_web_server.cert")
+};
+
+https.createServer(serverOptions, function(req, res) {
     console.log(req.url);
     if(req.url == "/") {
         res.write("Hello, Internet!");
@@ -111,6 +118,11 @@ http.createServer(function(req, res) {
             query[decodeURI(pair[0])] = decodeURI(pair[1]);
         }
     }
+    if(pathArray[0] == "version") {
+        res.write(VERSION);
+        res.end();
+        return;
+    }
     if(pathArray[0] == "jango.js") {
         fetch("https://raw.githubusercontent.com/KingJango13/JangoJS/refs/heads/main/index.js").then(function(jsData) {
             jsData.text().then(function(jsText) {
@@ -146,13 +158,15 @@ http.createServer(function(req, res) {
     if(pathArray[0] == "image") {
         if(hasOwn(imageRoutes, pathArray[1])) {
             fetch(imageRoutes[pathArray[1]]).then(async function(imgData) {
-                res.write(new Uint8Array(await imgData.arrayBuffer()));
+                res.writeHead(200, {"content-type":imgData.headers["Content-Type"] || "image/*"});
+                res.write(imgData.data);
                 res.end();
             });
         } else {
             res.write("Unknown Image");
             res.end();
         }
+        return;
     }
     if(pathArray[0] == "igscraper") {
         if(!hasQuery || query.username == null) {
