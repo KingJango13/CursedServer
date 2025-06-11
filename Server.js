@@ -82,6 +82,11 @@ http.createServer(function(req, res) {
     }
     let pathArray = req.url.substring(1).split("/");
     if(BROWSER_ICON_NAMES.includes(pathArray[0])) {
+        if(!fs.existsSync("./" + pathArray[0])) {
+            res.write("File does not exist");
+            res.end();
+            return;
+        }
         fs.readFile("./" + pathArray[0], function(error, data) {
             if(error) {
                 console.error(error);
