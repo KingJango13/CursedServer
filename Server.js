@@ -1,4 +1,4 @@
-const VERSION = "1.0.0";
+const VERSION = "1.0.1";
 
 const https = require("https");
 const fs = require("fs");
@@ -9,7 +9,7 @@ function hasOwn(o, p) {
 }
 
 function fetch(url, options) {
-    return axios(Object.assign({method:"get",url}, options));
+    return axios.get(url, options);
 }
 
 const BROWSER_ICON_NAMES = [
