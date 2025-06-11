@@ -1,9 +1,13 @@
 const http = require("http");
 const fs = require("fs");
-const {fetch} = require("node-fetch");
+const axios = require("axios");
 
 function hasOwn(o, p) {
     return Object.prototype.hasOwnProperty.call(o, p);
+}
+
+function fetch(url, options) {
+    return axios(Object.assign({method:"get",url}, options));
 }
 
 const BROWSER_ICON_NAMES = [
@@ -33,9 +37,6 @@ async function igWebAPIGet(path, params = {}, headers = {}) {
     if(query !== ""){
         url += "?" + query;
     }
-    /**
-     * @type {Response}
-     */
     var res;
 
     var reqHeaders = {
@@ -52,11 +53,11 @@ async function igWebAPIGet(path, params = {}, headers = {}) {
         console.error(error);
         return null;
     }
-    if(!res.ok) {
+    if(res.status != 200) {
         console.error(`Encountered error ${res.status}: ${res.statusText}\n`);
         return null;
     }
-    var data = await res.json();
+    var data = res.data;
     return data;
 }
 
